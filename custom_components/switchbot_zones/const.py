@@ -14,6 +14,7 @@ CONF_SOURCE_ENTRY: Final = "source_entry"
 CONF_ZONES: Final = "zones"
 CONF_BLEND_MODE: Final = "blend_mode"
 CONF_COLORS_PER_PACKET: Final = "colors_per_packet"
+CONF_BOTTOM_UP: Final = "bottom_up"
 
 # The core SwitchBot integration stores its keys under the same names.
 SWITCHBOT_DOMAIN: Final = "switchbot"
@@ -21,10 +22,13 @@ SWITCHBOT_DOMAIN: Final = "switchbot"
 SEGMENT_COUNT: Final = 21
 DEFAULT_ZONES: Final = "0-2, 9-11, 18-20"
 DEFAULT_BLEND_MODE: Final = "oklch"
-DEFAULT_COLORS_PER_PACKET: Final = 1
 # Encrypted write = 57 + key id + 2 header bytes + 0F490B + meta + 3 per colour.
-# Four colours make 20 bytes, the payload of a write at the default ATT MTU.
+# Four colours make 20 bytes, the payload of a write at the default ATT MTU,
+# and four is what the SwitchBot app sends.
+DEFAULT_COLORS_PER_PACKET: Final = 4
 MAX_COLORS_PER_PACKET: Final = 4
+# The lamp's segment 0 is at the top. Users count zones from the floor up.
+DEFAULT_BOTTOM_UP: Final = True
 
 # Seconds. Bundles the per-zone calls of one scene activation into one frame.
 WRITE_DEBOUNCE: Final = 0.15

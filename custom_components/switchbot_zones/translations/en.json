@@ -37,10 +37,12 @@
         "data": {
           "zones": "Zones",
           "blend_mode": "Blend mode",
-          "colors_per_packet": "Colours per Bluetooth packet"
+          "colors_per_packet": "Colours per Bluetooth packet",
+          "bottom_up": "Count segments from the bottom"
         },
         "data_description": {
-          "colors_per_packet": "1 is known to work. Higher values send fewer packets, if the lamp accepts them."
+          "colors_per_packet": "4 is what the SwitchBot app sends. Lower only if packets get lost.",
+          "bottom_up": "On: segment 0 and Zone 1 are at the floor. Off: at the top, the lamp's own order."
         }
       }
     },

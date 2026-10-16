@@ -37,10 +37,12 @@
         "data": {
           "zones": "Zonen",
           "blend_mode": "Verlauf",
-          "colors_per_packet": "Farben pro Bluetooth-Paket"
+          "colors_per_packet": "Farben pro Bluetooth-Paket",
+          "bottom_up": "Segmente von unten zählen"
         },
         "data_description": {
-          "colors_per_packet": "1 funktioniert nachweislich. Höhere Werte sparen Pakete, falls die Lampe sie annimmt."
+          "colors_per_packet": "4 schickt auch die SwitchBot-App. Nur verringern, wenn Pakete verloren gehen.",
+          "bottom_up": "An: Segment 0 und Zone 1 sind unten am Boden. Aus: oben, wie die Lampe selbst zählt."
         }
       }
     },

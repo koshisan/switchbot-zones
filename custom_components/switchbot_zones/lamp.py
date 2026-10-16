@@ -53,8 +53,10 @@ class FloorLamp(SwitchbotRgbicLight):
         await self._checked(CMD_BRIGHTNESS.format(percent))
 
     async def write_frame(self, frame: list[RGB], per_packet: int) -> None:
-        """Step mode, then every segment. Only the last packet carries the
-        commit flag, so the lamp switches to the new frame in one go.
+        """Step mode, then every segment, each packet with the commit flag.
+
+        Once the lamp is already in step mode it only shows packets that carry
+        the flag themselves; unflagged ones are acknowledged and dropped.
 
         A status other than 01 does not abort the frame: whatever the lamp
         says to each packet is collected and reported once."""
@@ -63,8 +65,7 @@ class FloorLamp(SwitchbotRgbicLight):
         ]
         for start in range(0, len(frame), per_packet):
             chunk = frame[start : start + per_packet]
-            last = start + per_packet >= len(frame)
-            meta = start | (SEGMENT_COMMIT if last else 0)
+            meta = start | SEGMENT_COMMIT
             colors = "".join(f"{r:02X}{g:02X}{b:02X}" for r, g, b in chunk)
             key = CMD_SEGMENT.format(meta, colors)
             sent.append((key, await self._command(key)))

@@ -14,6 +14,7 @@ from homeassistant.config_entries import (
 )
 from homeassistant.core import callback
 from homeassistant.helpers.selector import (
+    BooleanSelector,
     NumberSelector,
     NumberSelectorConfig,
     NumberSelectorMode,
@@ -26,12 +27,14 @@ import voluptuous as vol
 from .const import (
     CONF_ADDRESS,
     CONF_BLEND_MODE,
+    CONF_BOTTOM_UP,
     CONF_COLORS_PER_PACKET,
     CONF_ENCRYPTION_KEY,
     CONF_KEY_ID,
     CONF_SOURCE_ENTRY,
     CONF_ZONES,
     DEFAULT_BLEND_MODE,
+    DEFAULT_BOTTOM_UP,
     DEFAULT_COLORS_PER_PACKET,
     DEFAULT_ZONES,
     DOMAIN,
@@ -187,6 +190,7 @@ class SwitchbotZonesOptionsFlow(OptionsFlow):
             CONF_ZONES: DEFAULT_ZONES,
             CONF_BLEND_MODE: DEFAULT_BLEND_MODE,
             CONF_COLORS_PER_PACKET: DEFAULT_COLORS_PER_PACKET,
+            CONF_BOTTOM_UP: DEFAULT_BOTTOM_UP,
             **self.config_entry.options,
             **(user_input or {}),
         }
@@ -211,6 +215,7 @@ class SwitchbotZonesOptionsFlow(OptionsFlow):
                                 mode=NumberSelectorMode.BOX,
                             )
                         ),
+                        vol.Required(CONF_BOTTOM_UP): BooleanSelector(),
                     }
                 ),
                 current,

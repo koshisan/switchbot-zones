@@ -58,12 +58,14 @@ class SwitchbotZonesCoordinator(DataUpdateCoordinator[None]):
         zones: list[list[int]],
         blend_mode: str,
         colors_per_packet: int,
+        bottom_up: bool,
     ) -> None:
         super().__init__(hass, _LOGGER, config_entry=entry, name=f"{DOMAIN} {address}")
         self.lamp = lamp
         self.address = address
         self.blend_mode = blend_mode
         self.colors_per_packet = colors_per_packet
+        self.bottom_up = bottom_up
         self.zones = [Zone(index=i, segments=s) for i, s in enumerate(zones, start=1)]
         self.available = True
         self._device_on: bool | None = None
@@ -136,9 +138,12 @@ class SwitchbotZonesCoordinator(DataUpdateCoordinator[None]):
         await self._debouncer.async_call()
 
     def frame(self) -> list[RGB]:
-        return render(
+        """Segments in the lamp's own order. Zone ranges count from the
+        bottom when bottom_up is set; the lamp counts from the top."""
+        frame = render(
             [(z.segments, z.rgb) for z in self.zones], SEGMENT_COUNT, self.blend_mode
         )
+        return frame[::-1] if self.bottom_up else frame
 
     async def _async_flush(self) -> None:
         """Every write is a complete frame: the gaps between zones depend on

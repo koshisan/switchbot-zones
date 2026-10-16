@@ -66,7 +66,8 @@ Changing options reloads the integration. No Home Assistant restart needed.
 |---|---|---|
 | Zones | `0-2, 9-11, 18-20` | Segment ranges, one per zone. The number of ranges is the number of light entities. |
 | Blend mode | OKLCH | How the segments between two zones are mixed. |
-| Colours per packet | 1 | Segments per Bluetooth write. 1 is known to work; higher values are experimental. |
+| Colours per packet | 4 | Segments per Bluetooth write, as the SwitchBot app sends them. |
+| Count segments from the bottom | on | Segment 0 and Zone 1 at the floor. Off uses the lamp's own order, which starts at the top. |
 
 Blend modes:
 
@@ -105,9 +106,11 @@ reach the lamp.
 A frame is written as:
 
 1. `57 0F 49 0C 01` — switch the lamp to per-segment mode
-2. `57 0F 49 0B <meta> RR GG BB …` for every segment, `meta` being the index of
-   the first segment in the packet; the last packet has bit `0x80` set, which
-   makes the lamp show the whole frame at once
+2. `57 0F 49 0B <meta> RR GG BB …` with up to four colours per packet, `meta`
+   being the index of the first segment in the packet with bit `0x80` set
+
+The `0x80` bit has to be on every packet: once the lamp is already in
+per-segment mode, it acknowledges packets without it but does not show them.
 
 Details:
 

@@ -11,11 +11,13 @@ from homeassistant.exceptions import ConfigEntryNotReady
 from .const import (
     CONF_ADDRESS,
     CONF_BLEND_MODE,
+    CONF_BOTTOM_UP,
     CONF_COLORS_PER_PACKET,
     CONF_ENCRYPTION_KEY,
     CONF_KEY_ID,
     CONF_ZONES,
     DEFAULT_BLEND_MODE,
+    DEFAULT_BOTTOM_UP,
     DEFAULT_COLORS_PER_PACKET,
     DEFAULT_ZONES,
     SEGMENT_COUNT,
@@ -56,6 +58,7 @@ async def async_setup_entry(
         parse_zones(options.get(CONF_ZONES, DEFAULT_ZONES), SEGMENT_COUNT),
         options.get(CONF_BLEND_MODE, DEFAULT_BLEND_MODE),
         options.get(CONF_COLORS_PER_PACKET, DEFAULT_COLORS_PER_PACKET),
+        options.get(CONF_BOTTOM_UP, DEFAULT_BOTTOM_UP),
     )
     entry.runtime_data = coordinator
 
