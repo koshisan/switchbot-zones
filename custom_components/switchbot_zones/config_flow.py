@@ -155,9 +155,10 @@ class SwitchbotZonesConfigFlow(ConfigFlow, domain=DOMAIN):
         address = address.upper()
         data = {CONF_ADDRESS: address, CONF_KEY_ID: key_id, CONF_ENCRYPTION_KEY: key}
         await self.async_set_unique_id(address)
-        # Adding a lamp that already exists replaces its key and reloads it,
-        # which is the way to fix a wrong key without losing the entities.
-        self._abort_if_unique_id_configured(updates=data)
+        # Adding a lamp that already exists replaces its key, which is the way
+        # to fix a wrong key without losing the entities. The entry's update
+        # listener does the reload.
+        self._abort_if_unique_id_configured(updates=data, reload_on_update=False)
         return self.async_create_entry(
             title=f"SwitchBot Floor Lamp {address[-5:]}", data=data
         )
