@@ -52,6 +52,12 @@ Copy `custom_components/switchbot_zones/` into your Home Assistant
 the lamp from your SwitchBot entries, or choose **Manual** and enter address,
 key ID and key.
 
+Either way the key is tested against the lamp before it is saved. A key in the
+core SwitchBot entry can be stale — the lamp then answers every command with
+status `04`, for the core integration as well. To fix the key of a lamp that is
+already set up, run **Add Integration → SwitchBot Zones → Manual** again with
+the correct key: the existing entry is updated and reloaded, entities stay.
+
 ## Options
 
 Changing options reloads the integration. No Home Assistant restart needed.

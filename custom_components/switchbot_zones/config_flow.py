@@ -73,16 +73,26 @@ class SwitchbotZonesConfigFlow(ConfigFlow, domain=DOMAIN):
         if not sources:
             return await self.async_step_manual()
 
+        errors: dict[str, str] = {}
         if user_input is not None:
             choice = user_input[CONF_SOURCE_ENTRY]
             if choice == MANUAL:
                 return await self.async_step_manual()
             src = sources[choice]
-            return await self._async_create(
-                src.data[CONF_ADDRESS],
+            # A key in the core entry is not proof that it works: it can be
+            # stale, and then every command is answered with 04.
+            error = await self._async_verify(
+                src.data[CONF_ADDRESS].upper(),
                 src.data[CONF_KEY_ID],
                 src.data[CONF_ENCRYPTION_KEY],
             )
+            if error is None:
+                return await self._async_create(
+                    src.data[CONF_ADDRESS],
+                    src.data[CONF_KEY_ID],
+                    src.data[CONF_ENCRYPTION_KEY],
+                )
+            errors["base"] = "invalid_source_key" if error == "invalid_key" else error
 
         options = {
             entry_id: f"{e.title} ({e.data.get(CONF_ADDRESS, '?')})"
@@ -92,7 +102,19 @@ class SwitchbotZonesConfigFlow(ConfigFlow, domain=DOMAIN):
         return self.async_show_form(
             step_id="user",
             data_schema=vol.Schema({vol.Required(CONF_SOURCE_ENTRY): vol.In(options)}),
+            errors=errors,
         )
+
+    async def _async_verify(self, address: str, key_id: str, key: str) -> str | None:
+        """None if the lamp accepts the key, else an error key."""
+        ble_device = bluetooth.async_ble_device_from_address(
+            self.hass, address, connectable=True
+        )
+        if ble_device is None:
+            return "not_found"
+        if not await FloorLamp.verify_encryption_key(ble_device, key_id, key):
+            return "invalid_key"
+        return None
 
     async def async_step_manual(
         self, user_input: dict[str, Any] | None = None
@@ -107,16 +129,10 @@ class SwitchbotZonesConfigFlow(ConfigFlow, domain=DOMAIN):
                 errors[CONF_ADDRESS] = "invalid_address"
             elif not KEY_ID_RE.match(key_id) or not KEY_RE.match(key):
                 errors["base"] = "invalid_key_format"
+            elif error := await self._async_verify(address, key_id, key):
+                errors["base"] = error
             else:
-                ble_device = bluetooth.async_ble_device_from_address(
-                    self.hass, address, connectable=True
-                )
-                if ble_device is None:
-                    errors["base"] = "not_found"
-                elif not await FloorLamp.verify_encryption_key(ble_device, key_id, key):
-                    errors["base"] = "invalid_key"
-                else:
-                    return await self._async_create(address, key_id, key)
+                return await self._async_create(address, key_id, key)
 
         return self.async_show_form(
             step_id="manual",
@@ -137,15 +153,13 @@ class SwitchbotZonesConfigFlow(ConfigFlow, domain=DOMAIN):
         self, address: str, key_id: str, key: str
     ) -> ConfigFlowResult:
         address = address.upper()
+        data = {CONF_ADDRESS: address, CONF_KEY_ID: key_id, CONF_ENCRYPTION_KEY: key}
         await self.async_set_unique_id(address)
-        self._abort_if_unique_id_configured()
+        # Adding a lamp that already exists replaces its key and reloads it,
+        # which is the way to fix a wrong key without losing the entities.
+        self._abort_if_unique_id_configured(updates=data)
         return self.async_create_entry(
-            title=f"SwitchBot Floor Lamp {address[-5:]}",
-            data={
-                CONF_ADDRESS: address,
-                CONF_KEY_ID: key_id,
-                CONF_ENCRYPTION_KEY: key,
-            },
+            title=f"SwitchBot Floor Lamp {address[-5:]}", data=data
         )
 
 

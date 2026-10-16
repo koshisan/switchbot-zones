@@ -22,10 +22,11 @@
       "invalid_address": "Not a Bluetooth address (AA:BB:CC:DD:EE:FF).",
       "invalid_key_format": "Key ID must be 2 and the key 32 hex characters.",
       "not_found": "No connectable adapter or proxy has seen this lamp.",
-      "invalid_key": "The lamp did not accept this key."
+      "invalid_key": "The lamp did not accept this key.",
+      "invalid_source_key": "The lamp does not accept the key stored in that SwitchBot entry. Choose Manual and enter the correct key."
     },
     "abort": {
-      "already_configured": "This lamp is already configured."
+      "already_configured": "This lamp is already configured. Its key has been updated if it changed."
     }
   },
   "options": {

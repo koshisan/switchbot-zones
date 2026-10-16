@@ -22,10 +22,11 @@
       "invalid_address": "Keine Bluetooth-Adresse (AA:BB:CC:DD:EE:FF).",
       "invalid_key_format": "Key-ID muss 2, der Schlüssel 32 Hex-Zeichen lang sein.",
       "not_found": "Kein verbindungsfähiger Adapter oder Proxy hat diese Lampe gesehen.",
-      "invalid_key": "Die Lampe hat den Schlüssel nicht akzeptiert."
+      "invalid_key": "Die Lampe hat den Schlüssel nicht akzeptiert.",
+      "invalid_source_key": "Die Lampe akzeptiert den Schlüssel aus diesem SwitchBot-Eintrag nicht. „Manual“ wählen und den richtigen Schlüssel eingeben."
     },
     "abort": {
-      "already_configured": "Diese Lampe ist bereits eingerichtet."
+      "already_configured": "Diese Lampe ist bereits eingerichtet. Ihr Schlüssel wurde aktualisiert, falls er sich geändert hat."
     }
   },
   "options": {
