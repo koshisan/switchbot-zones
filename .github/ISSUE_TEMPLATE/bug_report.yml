@@ -1,0 +1,45 @@
+name: Bug report
+description: Something is broken
+title: "[Bug] "
+labels: ["bug"]
+body:
+  - type: input
+    id: model
+    attributes:
+      label: Lamp model and firmware
+      placeholder: "RGBICWW Floor Lamp (W1102004), fw 1.2"
+    validations:
+      required: true
+  - type: input
+    id: ha_version
+    attributes:
+      label: Home Assistant version
+      placeholder: "2026.10.1"
+    validations:
+      required: true
+  - type: input
+    id: bluetooth
+    attributes:
+      label: Bluetooth path
+      placeholder: "ESPHome Bluetooth proxy / local adapter"
+    validations:
+      required: true
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened, and what did you expect instead?
+    validations:
+      required: true
+  - type: textarea
+    id: logs
+    attributes:
+      label: Relevant log output
+      description: |
+        Enable debug logging first:
+        ```yaml
+        logger:
+          logs:
+            custom_components.switchbot_zones: debug
+            switchbot: debug
+        ```
+      render: shell

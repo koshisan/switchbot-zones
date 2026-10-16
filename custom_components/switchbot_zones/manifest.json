@@ -1,0 +1,14 @@
+{
+  "domain": "switchbot_zones",
+  "name": "SwitchBot Zones",
+  "after_dependencies": ["switchbot"],
+  "codeowners": ["@koshisan"],
+  "config_flow": true,
+  "dependencies": ["bluetooth_adapters"],
+  "documentation": "https://github.com/koshisan/switchbot-zones",
+  "integration_type": "device",
+  "iot_class": "local_push",
+  "issue_tracker": "https://github.com/koshisan/switchbot-zones/issues",
+  "requirements": ["PySwitchbot"],
+  "version": "0.1.0"
+}

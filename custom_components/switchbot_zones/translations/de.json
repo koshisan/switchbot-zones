@@ -1,0 +1,60 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "SwitchBot Zones",
+        "description": "Schlüssel von einer Lampe übernehmen, die schon in der SwitchBot-Integration eingerichtet ist, oder von Hand eingeben.",
+        "data": {
+          "source_entry": "Lampe"
+        }
+      },
+      "manual": {
+        "title": "Schlüssel eingeben",
+        "description": "Bluetooth-Adresse der Lampe sowie Key-ID und Schlüssel. Die Lampe muss in Reichweite eines verbindungsfähigen Adapters oder Proxys sein.",
+        "data": {
+          "address": "Bluetooth-Adresse",
+          "key_id": "Key-ID",
+          "encryption_key": "Schlüssel"
+        }
+      }
+    },
+    "error": {
+      "invalid_address": "Keine Bluetooth-Adresse (AA:BB:CC:DD:EE:FF).",
+      "invalid_key_format": "Key-ID muss 2, der Schlüssel 32 Hex-Zeichen lang sein.",
+      "not_found": "Kein verbindungsfähiger Adapter oder Proxy hat diese Lampe gesehen.",
+      "invalid_key": "Die Lampe hat den Schlüssel nicht akzeptiert."
+    },
+    "abort": {
+      "already_configured": "Diese Lampe ist bereits eingerichtet."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Zonen",
+        "description": "Segmentbereiche pro Zone, durch Komma getrennt (Segmente 0-20). Die Segmente zwischen zwei Zonen werden als Verlauf berechnet.",
+        "data": {
+          "zones": "Zonen",
+          "blend_mode": "Verlauf",
+          "colors_per_packet": "Farben pro Bluetooth-Paket"
+        },
+        "data_description": {
+          "colors_per_packet": "1 funktioniert nachweislich. Höhere Werte sparen Pakete, falls die Lampe sie annimmt."
+        }
+      }
+    },
+    "error": {
+      "invalid_zones": "Bereiche wie 0-2, 9-11, 18-20 ohne Überschneidungen angeben."
+    }
+  },
+  "selector": {
+    "blend_mode": {
+      "options": {
+        "rgb": "RGB (linear)",
+        "hsv": "HSV",
+        "oklab": "OKLab",
+        "oklch": "OKLCH (empfohlen)"
+      }
+    }
+  }
+}

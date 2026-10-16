@@ -1,0 +1,60 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "SwitchBot Zones",
+        "description": "Take the encryption key from a lamp that is already set up in the SwitchBot integration, or enter it by hand.",
+        "data": {
+          "source_entry": "Lamp"
+        }
+      },
+      "manual": {
+        "title": "Enter key",
+        "description": "Bluetooth address of the lamp plus its key ID and encryption key. The lamp has to be in range of an adapter or proxy that can connect.",
+        "data": {
+          "address": "Bluetooth address",
+          "key_id": "Key ID",
+          "encryption_key": "Encryption key"
+        }
+      }
+    },
+    "error": {
+      "invalid_address": "Not a Bluetooth address (AA:BB:CC:DD:EE:FF).",
+      "invalid_key_format": "Key ID must be 2 and the key 32 hex characters.",
+      "not_found": "No connectable adapter or proxy has seen this lamp.",
+      "invalid_key": "The lamp did not accept this key."
+    },
+    "abort": {
+      "already_configured": "This lamp is already configured."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Zones",
+        "description": "Segment ranges per zone, comma separated (segments 0-20). The segments between two zones are blended.",
+        "data": {
+          "zones": "Zones",
+          "blend_mode": "Blend mode",
+          "colors_per_packet": "Colours per Bluetooth packet"
+        },
+        "data_description": {
+          "colors_per_packet": "1 is known to work. Higher values send fewer packets, if the lamp accepts them."
+        }
+      }
+    },
+    "error": {
+      "invalid_zones": "Use ranges like 0-2, 9-11, 18-20 without overlaps."
+    }
+  },
+  "selector": {
+    "blend_mode": {
+      "options": {
+        "rgb": "RGB (linear)",
+        "hsv": "HSV",
+        "oklab": "OKLab",
+        "oklch": "OKLCH (recommended)"
+      }
+    }
+  }
+}
