@@ -34,27 +34,49 @@ class FloorLamp(SwitchbotRgbicLight):
         # the fresh BLEDevice and the cached isOn.
         SwitchbotDevice.update_from_advertisement(self, advertisement)
 
-    async def _command(self, key: str) -> None:
+    async def _command(self, key: str) -> int:
+        """Send one command; no answer at all is an error, the status byte is
+        returned for the caller to judge."""
         result = await self._send_command(key)
-        if not result or result[0] != 1:
-            raise LampCommandError(
-                f"{key} -> {result.hex() if result else 'no response'}"
-            )
+        if not result:
+            raise LampCommandError(f"{key} -> no response")
+        return result[0]
+
+    async def _checked(self, key: str) -> None:
+        if (status := await self._command(key)) != 1:
+            raise LampCommandError(f"{key} -> status {status:02x}")
 
     async def power(self, on: bool) -> None:
-        await self._command(CMD_TURN_ON if on else CMD_TURN_OFF)
+        await self._checked(CMD_TURN_ON if on else CMD_TURN_OFF)
 
     async def global_brightness(self, percent: int) -> None:
-        await self._command(CMD_BRIGHTNESS.format(percent))
+        await self._checked(CMD_BRIGHTNESS.format(percent))
 
     async def write_frame(self, frame: list[RGB], per_packet: int) -> None:
         """Step mode, then every segment. Only the last packet carries the
-        commit flag, so the lamp switches to the new frame in one go."""
-        await self._command(CMD_STEP_MODE)
+        commit flag, so the lamp switches to the new frame in one go.
+
+        A status other than 01 does not abort the frame: whatever the lamp
+        says to each packet is collected and reported once."""
+        sent: list[tuple[str, int]] = [
+            (CMD_STEP_MODE, await self._command(CMD_STEP_MODE))
+        ]
         for start in range(0, len(frame), per_packet):
             chunk = frame[start : start + per_packet]
             last = start + per_packet >= len(frame)
             meta = start | (SEGMENT_COMMIT if last else 0)
             colors = "".join(f"{r:02X}{g:02X}{b:02X}" for r, g, b in chunk)
-            await self._command(CMD_SEGMENT.format(meta, colors))
-        _LOGGER.debug("%s: wrote %d segments", self.name, len(frame))
+            key = CMD_SEGMENT.format(meta, colors)
+            sent.append((key, await self._command(key)))
+
+        rejected = [f"{key} -> {status:02x}" for key, status in sent if status != 1]
+        if rejected:
+            _LOGGER.warning(
+                "%s: %d of %d packets not acknowledged: %s",
+                self.name,
+                len(rejected),
+                len(sent),
+                ", ".join(rejected),
+            )
+        else:
+            _LOGGER.debug("%s: wrote %d segments", self.name, len(frame))

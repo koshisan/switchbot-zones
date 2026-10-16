@@ -156,7 +156,12 @@ class SwitchbotZonesCoordinator(DataUpdateCoordinator[None]):
                 await self.lamp.power(True)
                 self._device_on = True
             if not self._calibrated:
-                await self.lamp.global_brightness(100)
+                # Best effort: the floor lamp answers 04 to this, and the
+                # frame must not depend on it.
+                try:
+                    await self.lamp.global_brightness(100)
+                except LampCommandError as err:
+                    _LOGGER.debug("global brightness not accepted: %s", err)
                 self._calibrated = True
             await self.lamp.write_frame(self.frame(), self.colors_per_packet)
         except WRITE_ERRORS as err:
